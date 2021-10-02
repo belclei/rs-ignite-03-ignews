@@ -1,6 +1,7 @@
 import { query as q } from 'faunadb'
 
 import NextAuth from 'next-auth'
+import { session } from 'next-auth/client'
 import Providers from 'next-auth/providers'
 import { fauna } from '../../../services/fauna'
 
@@ -13,6 +14,11 @@ export default NextAuth({
     })
   ],
   callbacks: {
+    async session(session) {
+      const activeSubscription = true
+
+      return { ...session, activeSubscription }
+    },
     async signIn(user, account, profile) {
       const { email } = user
       try {

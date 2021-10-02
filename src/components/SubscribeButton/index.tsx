@@ -1,4 +1,5 @@
 import { signIn, useSession } from 'next-auth/client'
+import { useRouter } from 'next/router'
 import { api } from '../../services/api'
 import styles from './styles.module.scss'
 
@@ -7,20 +8,21 @@ interface SubscribeButtonProps {
 }
 export function SubscribeButton({ priceId }: SubscribeButtonProps) {
   const [session] = useSession()
+  const router = useRouter()
 
   async function handleSubscribe() {
-    console.log('começou')
     if (!session) {
       signIn('github')
       return
     }
-    console.log('passou')
 
+    if (session.activeSubscription) {
+      router.push('/posts')
+      return
+    }
     // criação da checkout session
     try {
       const response = await api.post('/subscribe')
-
-      console.log('data', response.data)
     } catch (err) {
       alert(err.message)
     }
